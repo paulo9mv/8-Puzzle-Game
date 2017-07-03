@@ -21,7 +21,8 @@
 function [n, error] = astar(M, h)
 	
 	error = 0;
-
+  
+      
 	%Cria uma fila de prioridades vazia
 	q = PriorityQueue();
 	
@@ -31,7 +32,10 @@ function [n, error] = astar(M, h)
 	% Cria um novo n� __n__ com estado igual a matriz __M__ (estado inicial) e 
 	% custo 0 (zero).
  	n = Node(M, 0);
-  
+  if ~solvable(M)
+      error = 1;
+      break
+  end
 	
 	% Insere o n� __n__ na fila de prioridades __q__. O custo deste n� 
 	% � igual a n.f+g(n.State). g � um apontador para fun�ao heuristica
@@ -41,12 +45,10 @@ function [n, error] = astar(M, h)
     i = 0;
 
 	  while (~q.isempty())
-	      n = q.extractMin();
-        
-        
+	      n = q.extractMin(); 
+         
         if(~isequal(n.State,O))
-            legalmoves = legal_moves(n.State);
-            
+            legalmoves = legal_moves(n.State);        
 	          for ind = 1: size(legalmoves)   %caminhando entre as posi�oes legais, qual posi�ao tem melhor custo
                 new_state = do_move(n.State, legalmoves(ind));           
                 custo = h(new_state);           
@@ -54,8 +56,10 @@ function [n, error] = astar(M, h)
                 no.Prev = n;
                
                 if i < 1
+                   
                     q.insert(n.f + custo, no);         
-                elseif(~isequal(new_state, n.Prev.State))          
+                elseif(~isequal(new_state, n.Prev.State))
+                                 
                         q.insert(n.f + custo, no);    
                 end          
             end       
